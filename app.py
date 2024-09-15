@@ -17,18 +17,16 @@ else:
 
   st.title("Chat AI - Semelhante ao ChatGPT")
 
-  # Inicialização das mensagens
+  # Inicialização das mensagens sem a mensagem 'system'
   if 'messages' not in st.session_state:
-      st.session_state['messages'] = [
-          {"role": "system", "content": "You are an AI assistant who knows everything."}
-      ]
+      st.session_state['messages'] = []
 
   # Função para exibir mensagens
   def display_messages():
-      for message in st.session_state['messages'][1:]:
+      for message in st.session_state['messages']:
           if message['role'] == 'user':
               st.markdown(f"**Você:** {message['content']}")
-          else:
+          elif message['role'] == 'assistant':
               st.markdown(f"**Assistente:** {message['content']}")
 
   display_messages()
