@@ -16,8 +16,9 @@ else:
   )
 
   st.title("Chat AI - Semelhante ao ChatGPT")
+  st.sidebar.header("Configurações")
 
-  # Inicialização das mensagens sem a mensagem 'system'
+  # Inicialização das mensagens
   if 'messages' not in st.session_state:
       st.session_state['messages'] = []
 
@@ -29,15 +30,26 @@ else:
           elif message['role'] == 'assistant':
               st.markdown(f"**Assistente:** {message['content']}")
 
+  # Exibir mensagens
   display_messages()
 
   # Caixa de entrada de texto
   user_input = st.text_input("Digite sua mensagem:", "")
 
+  # Upload de arquivos
+  uploaded_file = st.file_uploader("Faça upload de um arquivo", type=["txt", "pdf", "docx", "png", "jpg", "jpeg"])
+
   if st.button("Enviar"):
       if user_input:
           # Adiciona a mensagem do usuário ao histórico
           st.session_state['messages'].append({"role": "user", "content": user_input})
+
+          # Processar o arquivo enviado, se houver
+          if uploaded_file is not None:
+              file_content = uploaded_file.read()
+              file_text = file_content.decode("utf-8") if uploaded_file.type in ["text/plain", "application/pdf"] else "Arquivo recebido."
+              st.session_state['messages'].append({"role": "user", "content": f"Arquivo enviado: {uploaded_file.name}"})
+              st.session_state['messages'].append({"role": "user", "content": file_text})
 
           # Chama a API da AIML
           response = client.chat.completions.create(
